@@ -48,7 +48,26 @@ function App() {
   };
 
   const toTime = (unix, timezone) => {
-    return new Date((unix + timezone) * 1000).toLocaleTimeString();
+    // OpenWeatherMap returns Unix timestamp in UTC (seconds)
+    // timezone is offset in seconds from UTC (e.g., 19800 for IST = +5:30)
+    // Convert to city's local time by adding timezone offset
+    const localUnixSeconds = unix + timezone;
+    
+    // Convert to Date object (this will be interpreted as UTC, but we've already adjusted)
+    const date = new Date(localUnixSeconds * 1000);
+    
+    // Extract UTC components (since we've already adjusted for timezone)
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    
+    // Convert to 12-hour format
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = seconds.toString().padStart(2, '0');
+    
+    return `${displayHours}:${formattedMinutes}:${formattedSeconds} ${period}`;
   };
 
   const showCityOnMap = () => {
@@ -162,6 +181,11 @@ function App() {
           placeholder="Enter city name (e.g. Pune, Mumbai, London)"
           value={city}
           onChange={(e) => setCity(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              getWeather();
+            }
+          }}
           style={{
             flex: 1,
             minWidth: "200px",

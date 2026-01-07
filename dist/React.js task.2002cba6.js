@@ -17449,7 +17449,22 @@ function App() {
         }
     };
     const toTime = (unix, timezone)=>{
-        return new Date((unix + timezone) * 1000).toLocaleTimeString();
+        // OpenWeatherMap returns Unix timestamp in UTC (seconds)
+        // timezone is offset in seconds from UTC (e.g., 19800 for IST = +5:30)
+        // Convert to city's local time by adding timezone offset
+        const localUnixSeconds = unix + timezone;
+        // Convert to Date object (this will be interpreted as UTC, but we've already adjusted)
+        const date = new Date(localUnixSeconds * 1000);
+        // Extract UTC components (since we've already adjusted for timezone)
+        const hours = date.getUTCHours();
+        const minutes = date.getUTCMinutes();
+        const seconds = date.getUTCSeconds();
+        // Convert to 12-hour format
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        const formattedMinutes = minutes.toString().padStart(2, '0');
+        const formattedSeconds = seconds.toString().padStart(2, '0');
+        return `${displayHours}:${formattedMinutes}:${formattedSeconds} ${period}`;
     };
     const showCityOnMap = ()=>{
         // If no city text, do nothing
@@ -17522,7 +17537,7 @@ function App() {
                                 children: "\uD83C\uDF24 Weather Dashboard"
                             }, void 0, false, {
                                 fileName: "app.js",
-                                lineNumber: 126,
+                                lineNumber: 145,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -17534,13 +17549,13 @@ function App() {
                                 children: "Enter a city name to see current weather details."
                             }, void 0, false, {
                                 fileName: "app.js",
-                                lineNumber: 135,
+                                lineNumber: 154,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "app.js",
-                        lineNumber: 125,
+                        lineNumber: 144,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -17554,13 +17569,13 @@ function App() {
                         children: "Powered by OpenWeatherMap"
                     }, void 0, false, {
                         fileName: "app.js",
-                        lineNumber: 139,
+                        lineNumber: 158,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "app.js",
-                lineNumber: 117,
+                lineNumber: 136,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17576,6 +17591,9 @@ function App() {
                         placeholder: "Enter city name (e.g. Pune, Mumbai, London)",
                         value: city,
                         onChange: (e)=>setCity(e.target.value),
+                        onKeyPress: (e)=>{
+                            if (e.key === "Enter") getWeather();
+                        },
                         style: {
                             flex: 1,
                             minWidth: "200px",
@@ -17588,7 +17606,7 @@ function App() {
                         }
                     }, void 0, false, {
                         fileName: "app.js",
-                        lineNumber: 160,
+                        lineNumber: 179,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -17604,13 +17622,13 @@ function App() {
                         children: "Search"
                     }, void 0, false, {
                         fileName: "app.js",
-                        lineNumber: 176,
+                        lineNumber: 200,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "app.js",
-                lineNumber: 152,
+                lineNumber: 171,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17630,12 +17648,12 @@ function App() {
                     children: "Show City on Map"
                 }, void 0, false, {
                     fileName: "app.js",
-                    lineNumber: 193,
+                    lineNumber: 217,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "app.js",
-                lineNumber: 192,
+                lineNumber: 216,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -17648,7 +17666,7 @@ function App() {
                 children: error
             }, void 0, false, {
                 fileName: "app.js",
-                lineNumber: 209,
+                lineNumber: 233,
                 columnNumber: 9
             }, this),
             weather && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17670,7 +17688,7 @@ function App() {
                         ]
                     }, void 0, true, {
                         fileName: "app.js",
-                        lineNumber: 224,
+                        lineNumber: 248,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17702,12 +17720,12 @@ function App() {
                                     }
                                 }, void 0, false, {
                                     fileName: "app.js",
-                                    lineNumber: 257,
+                                    lineNumber: 281,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "app.js",
-                                lineNumber: 245,
+                                lineNumber: 269,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17723,7 +17741,7 @@ function App() {
                                 ]
                             }, void 0, true, {
                                 fileName: "app.js",
-                                lineNumber: 267,
+                                lineNumber: 291,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17735,13 +17753,13 @@ function App() {
                                 children: weather.weather?.[0]?.description ? weather.weather[0].description : ""
                             }, void 0, false, {
                                 fileName: "app.js",
-                                lineNumber: 277,
+                                lineNumber: 301,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "app.js",
-                        lineNumber: 236,
+                        lineNumber: 260,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -17781,7 +17799,7 @@ function App() {
                                                 children: "Name"
                                             }, void 0, false, {
                                                 fileName: "app.js",
-                                                lineNumber: 314,
+                                                lineNumber: 338,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("th", {
@@ -17794,18 +17812,18 @@ function App() {
                                                 children: "Value"
                                             }, void 0, false, {
                                                 fileName: "app.js",
-                                                lineNumber: 325,
+                                                lineNumber: 349,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "app.js",
-                                        lineNumber: 313,
+                                        lineNumber: 337,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "app.js",
-                                    lineNumber: 312,
+                                    lineNumber: 336,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tbody", {
@@ -17823,7 +17841,7 @@ function App() {
                                                     children: "Longitude"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 339,
+                                                    lineNumber: 363,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -17836,13 +17854,13 @@ function App() {
                                                     children: weather.coord.lon
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 350,
+                                                    lineNumber: 374,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 338,
+                                            lineNumber: 362,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -17858,7 +17876,7 @@ function App() {
                                                     children: "Latitude"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 362,
+                                                    lineNumber: 386,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -17871,13 +17889,13 @@ function App() {
                                                     children: weather.coord.lat
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 373,
+                                                    lineNumber: 397,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 361,
+                                            lineNumber: 385,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -17893,7 +17911,7 @@ function App() {
                                                     children: "Temperature"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 385,
+                                                    lineNumber: 409,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -17909,13 +17927,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 396,
+                                                    lineNumber: 420,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 384,
+                                            lineNumber: 408,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -17929,7 +17947,7 @@ function App() {
                                                     children: "Feels Like"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 408,
+                                                    lineNumber: 432,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -17943,13 +17961,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 417,
+                                                    lineNumber: 441,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 407,
+                                            lineNumber: 431,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -17963,7 +17981,7 @@ function App() {
                                                     children: "Min Temp"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 427,
+                                                    lineNumber: 451,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -17977,13 +17995,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 436,
+                                                    lineNumber: 460,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 426,
+                                            lineNumber: 450,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -17997,7 +18015,7 @@ function App() {
                                                     children: "Max Temp"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 446,
+                                                    lineNumber: 470,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18011,13 +18029,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 455,
+                                                    lineNumber: 479,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 445,
+                                            lineNumber: 469,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18031,7 +18049,7 @@ function App() {
                                                     children: "Pressure"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 465,
+                                                    lineNumber: 489,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18045,13 +18063,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 474,
+                                                    lineNumber: 498,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 464,
+                                            lineNumber: 488,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18065,7 +18083,7 @@ function App() {
                                                     children: "Humidity"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 484,
+                                                    lineNumber: 508,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18079,13 +18097,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 493,
+                                                    lineNumber: 517,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 483,
+                                            lineNumber: 507,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18099,7 +18117,7 @@ function App() {
                                                     children: "Sea Level"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 503,
+                                                    lineNumber: 527,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18113,13 +18131,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 512,
+                                                    lineNumber: 536,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 502,
+                                            lineNumber: 526,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18133,7 +18151,7 @@ function App() {
                                                     children: "Ground Level"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 522,
+                                                    lineNumber: 546,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18147,13 +18165,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 531,
+                                                    lineNumber: 555,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 521,
+                                            lineNumber: 545,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18167,7 +18185,7 @@ function App() {
                                                     children: "Visibility"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 541,
+                                                    lineNumber: 565,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18181,13 +18199,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 550,
+                                                    lineNumber: 574,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 540,
+                                            lineNumber: 564,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18201,7 +18219,7 @@ function App() {
                                                     children: "Wind Speed"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 560,
+                                                    lineNumber: 584,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18215,13 +18233,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 569,
+                                                    lineNumber: 593,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 559,
+                                            lineNumber: 583,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18235,7 +18253,7 @@ function App() {
                                                     children: "Wind Direction"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 579,
+                                                    lineNumber: 603,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18249,13 +18267,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 588,
+                                                    lineNumber: 612,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 578,
+                                            lineNumber: 602,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18269,7 +18287,7 @@ function App() {
                                                     children: "Wind Gust"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 598,
+                                                    lineNumber: 622,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18283,13 +18301,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 607,
+                                                    lineNumber: 631,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 597,
+                                            lineNumber: 621,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18303,7 +18321,7 @@ function App() {
                                                     children: "Cloudiness"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 617,
+                                                    lineNumber: 641,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18317,13 +18335,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 626,
+                                                    lineNumber: 650,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 616,
+                                            lineNumber: 640,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18337,7 +18355,7 @@ function App() {
                                                     children: "Sunrise"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 636,
+                                                    lineNumber: 660,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18348,13 +18366,13 @@ function App() {
                                                     children: toTime(weather.sys.sunrise, weather.timezone)
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 645,
+                                                    lineNumber: 669,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 635,
+                                            lineNumber: 659,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18368,7 +18386,7 @@ function App() {
                                                     children: "Sunset"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 655,
+                                                    lineNumber: 679,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18379,13 +18397,13 @@ function App() {
                                                     children: toTime(weather.sys.sunset, weather.timezone)
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 664,
+                                                    lineNumber: 688,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 654,
+                                            lineNumber: 678,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18399,7 +18417,7 @@ function App() {
                                                     children: "Timezone"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 674,
+                                                    lineNumber: 698,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18413,13 +18431,13 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "app.js",
-                                                    lineNumber: 683,
+                                                    lineNumber: 707,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 673,
+                                            lineNumber: 697,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18433,7 +18451,7 @@ function App() {
                                                     children: "City ID"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 693,
+                                                    lineNumber: 717,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18444,13 +18462,13 @@ function App() {
                                                     children: weather.id
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 702,
+                                                    lineNumber: 726,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 692,
+                                            lineNumber: 716,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("tr", {
@@ -18463,7 +18481,7 @@ function App() {
                                                     children: "Base"
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 712,
+                                                    lineNumber: 736,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("td", {
@@ -18473,36 +18491,36 @@ function App() {
                                                     children: weather.base
                                                 }, void 0, false, {
                                                     fileName: "app.js",
-                                                    lineNumber: 720,
+                                                    lineNumber: 744,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "app.js",
-                                            lineNumber: 711,
+                                            lineNumber: 735,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "app.js",
-                                    lineNumber: 337,
+                                    lineNumber: 361,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "app.js",
-                            lineNumber: 304,
+                            lineNumber: 328,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "app.js",
-                        lineNumber: 291,
+                        lineNumber: 315,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "app.js",
-                lineNumber: 222,
+                lineNumber: 246,
                 columnNumber: 9
             }, this),
             mapUrl && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -18525,18 +18543,18 @@ function App() {
                     referrerPolicy: "no-referrer-when-downgrade"
                 }, void 0, false, {
                     fileName: "app.js",
-                    lineNumber: 745,
+                    lineNumber: 769,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "app.js",
-                lineNumber: 736,
+                lineNumber: 760,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "app.js",
-        lineNumber: 107,
+        lineNumber: 126,
         columnNumber: 5
     }, this);
 }
