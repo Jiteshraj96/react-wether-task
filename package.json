@@ -1,0 +1,18 @@
+{
+  "name": "react.js-task",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "parcel": "^2.16.3",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}
